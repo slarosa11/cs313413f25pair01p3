@@ -1,13 +1,13 @@
 package edu.luc.etl.cs313.android.shapes.model;
 
+import android.graphics.Rect;
+
 /**
  * A shape visitor for calculating the bounding box, that is, the smallest
  * rectangle containing the shape. The resulting bounding box is returned as a
  * rectangle at a specific location.
  */
 public class BoundingBox implements Visitor<Location> {
-
-    // TODO entirely your job (except onCircle)
 
     @Override
     public Location onCircle(final Circle c) {
@@ -17,38 +17,47 @@ public class BoundingBox implements Visitor<Location> {
 
     @Override
     public Location onFill(final Fill f) {
-        return null;
+        return f.getShape().accept(this);
     }
 
     @Override
     public Location onGroup(final Group g) {
-
-        return null;
+        int minX=Integer.MAX_VALUE,minY=Integer.MAX_VALUE;
+        int maxX=Integer.MIN_VALUE,maxY=Integer.MIN_VALUE;
+        for (final Shape s : g.getShapes()) {
+            final Location box = s.accept(this);
+            final Rectangle r = (Rectangle) box.getShape();
+            minX=Math.min(minX,box.getX());
+            minY=Math.min(minY,box.getY());
+            maxX=Math.max(maxX,box.getX()+r.getWidth());
+            maxY=Math.max(maxY,box.getY()+r.getHeight());
+        }
+        return new Location(minX,minY,new Rectangle(maxX-minX,maxY-minY));
     }
 
     @Override
     public Location onLocation(final Location l) {
-
-        return null;
+        final Location box = l.getShape().accept(this);
+        return new Location(1.getX()+box.getX(),1.getY()+box.getY(),box.getShape());
     }
 
     @Override
     public Location onRectangle(final Rectangle r) {
-        return null;
+        return new Location(0,0,r);
     }
 
     @Override
     public Location onStrokeColor(final StrokeColor c) {
-        return null;
+        return f.getShape().accept(this);
     }
 
     @Override
     public Location onOutline(final Outline o) {
-        return null;
+        return f.getShape().accept(this);
     }
 
     @Override
     public Location onPolygon(final Polygon s) {
-        return null;
+        return onGroup(s);
     }
 }
