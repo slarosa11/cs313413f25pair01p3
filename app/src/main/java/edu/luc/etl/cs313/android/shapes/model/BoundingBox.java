@@ -38,7 +38,7 @@ public class BoundingBox implements Visitor<Location> {
     @Override
     public Location onLocation(final Location l) {
         final Location box = l.getShape().accept(this);
-        return new Location(1.getX()+box.getX(),1.getY()+box.getY(),box.getShape());
+        return new Location(l.getX()+box.getX(),l.getY()+box.getY(),box.getShape());
     }
 
     @Override
@@ -48,12 +48,12 @@ public class BoundingBox implements Visitor<Location> {
 
     @Override
     public Location onStrokeColor(final StrokeColor c) {
-        return f.getShape().accept(this);
+        return c.getShape().accept(this);
     }
 
     @Override
     public Location onOutline(final Outline o) {
-        return f.getShape().accept(this);
+        return o.getShape().accept(this);
     }
 
     @Override
